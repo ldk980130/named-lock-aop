@@ -18,10 +18,7 @@ class LockingAspect(
     @Around("@annotation(org.example.namedlockaop.lock.Locking)")
     fun execute(joinPoint: ProceedingJoinPoint): Any? {
         val lockKey = getLockKey(joinPoint)
-
-        return lockTemplate.execute(lockKey) {
-            joinPoint.proceed()
-        }
+        return lockTemplate.execute(lockKey) { joinPoint.proceed() }
     }
 
     private fun getLockKey(joinPoint: ProceedingJoinPoint): String {
