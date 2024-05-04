@@ -12,18 +12,15 @@ import java.lang.reflect.Method
 @Aspect
 @Order(Integer.MAX_VALUE - 1)
 class LockingAspect(
-    private val lockManager: LockManager
+    private val lockTemplate: LockTemplate
 ) {
 
     @Around("@annotation(org.example.namedlockaop.lock.Locking)")
     fun execute(joinPoint: ProceedingJoinPoint): Any? {
         val lockKey = getLockKey(joinPoint)
 
-        try {
-            lockManager.lock(lockKey)
-            return joinPoint.proceed()
-        } finally {
-            lockManager.unlock(lockKey)
+        return lockTemplate.execute(lockKey) {
+            joinPoint.proceed()
         }
     }
 

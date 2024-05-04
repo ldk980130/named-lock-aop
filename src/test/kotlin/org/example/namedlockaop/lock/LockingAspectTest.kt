@@ -1,9 +1,7 @@
 package org.example.namedlockaop.lock
 
 import com.ninjasquad.springmockk.MockkBean
-import io.mockk.Runs
 import io.mockk.every
-import io.mockk.just
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -19,12 +17,11 @@ class LockingAspectTest {
     private lateinit var testTarget: TestTarget
 
     @MockkBean
-    private lateinit var lockManager: LockManager
+    private lateinit var lockTemplate: LockTemplate
 
     @BeforeEach
     fun setUp() {
-        every { lockManager.lock(any()) } just Runs
-        every { lockManager.unlock(any()) } just Runs
+        every { lockTemplate.execute(any(), any(), any()) } answers { }
     }
 
     @Test
@@ -36,8 +33,7 @@ class LockingAspectTest {
         testTarget.doSomething(key)
 
         // then
-        verify { lockManager.lock("$prefix:$key") }
-        verify { lockManager.unlock("$prefix:$key") }
+        verify { lockTemplate.execute("$prefix:$key", 1000, any()) }
     }
 
     @Test
@@ -48,8 +44,7 @@ class LockingAspectTest {
         testTarget.doSomething()
 
         // then
-        verify { lockManager.lock(prefix) }
-        verify { lockManager.unlock(prefix) }
+        verify { lockTemplate.execute(prefix, 1000, any()) }
     }
 }
 
