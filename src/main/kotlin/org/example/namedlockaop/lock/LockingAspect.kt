@@ -6,6 +6,7 @@ import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.reflect.MethodSignature
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
+import java.lang.reflect.Method
 
 @Component
 @Aspect
@@ -27,23 +28,25 @@ class LockingAspect(
     }
 
     private fun getLockKey(joinPoint: ProceedingJoinPoint): String {
-        val method = (joinPoint.signature as MethodSignature).method
-
-        val locking = method.getAnnotation(Locking::class.java)
+        val locking = joinPoint.getAnnotation(Locking::class.java)
         val prefix = locking.keyPrefix
 
-        val parameters = method.parameters
-
-        val keyParameter = parameters
-            .find { it.isAnnotationPresent(LockKey::class.java) }
-
-        if (keyParameter == null) {
-            return prefix
-        }
-
-        val index = parameters.indexOf(keyParameter)
-        val key = joinPoint.args[index]
-
-        return "$prefix:$key"
+        return joinPoint.getArgValue(LockKey::class.java)
+            ?.let { "$prefix:$it" }
+            ?: prefix
     }
+
+    private fun <T : Annotation> ProceedingJoinPoint.getAnnotation(annotation: Class<T>): T {
+        return method().getAnnotation(annotation)
+    }
+
+    private fun <T : Annotation> ProceedingJoinPoint.getArgValue(annotation: Class<T>): String? {
+        val parameters = method().parameters
+        return parameters
+            .find { it.isAnnotationPresent(annotation) }
+            ?.let { args[parameters.indexOf(it)] }
+            ?.toString()
+    }
+
+    private fun ProceedingJoinPoint.method(): Method = (signature as MethodSignature).method
 }

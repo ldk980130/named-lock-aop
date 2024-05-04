@@ -28,7 +28,7 @@ class LockingAspectTest {
     }
 
     @Test
-    fun `lock aspect`() {
+    fun `lock aspect with key`() {
         val prefix = "test"
         val key = Random.nextLong()
 
@@ -39,6 +39,18 @@ class LockingAspectTest {
         verify { lockManager.lock("$prefix:$key") }
         verify { lockManager.unlock("$prefix:$key") }
     }
+
+    @Test
+    fun `lock aspect`() {
+        val prefix = "test"
+
+        // when
+        testTarget.doSomething()
+
+        // then
+        verify { lockManager.lock(prefix) }
+        verify { lockManager.unlock(prefix) }
+    }
 }
 
 @Component
@@ -46,5 +58,9 @@ class TestTarget {
 
     @Locking("test")
     fun doSomething(@LockKey key: Long) {
+    }
+
+    @Locking("test")
+    fun doSomething() {
     }
 }
