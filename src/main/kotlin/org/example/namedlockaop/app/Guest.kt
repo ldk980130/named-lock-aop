@@ -3,7 +3,7 @@ package org.example.namedlockaop.app
 import jakarta.persistence.*
 
 @Entity
-class Guest(
+class Guest private constructor(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
