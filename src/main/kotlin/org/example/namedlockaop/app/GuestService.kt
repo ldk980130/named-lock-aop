@@ -1,5 +1,7 @@
 package org.example.namedlockaop.app
 
+import org.example.namedlockaop.lock.LockKey
+import org.example.namedlockaop.lock.Locking
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -11,7 +13,8 @@ class GuestService(
     private val eventRepository: EventRepository
 ) {
 
-    fun apply(name: String, eventId: Long) {
+    @Locking("guest-apply")
+    fun apply(name: String, @LockKey eventId: Long) {
         val event = eventRepository.findByIdOrNull(eventId)
             ?: throw IllegalArgumentException("Event with id $eventId not found")
 

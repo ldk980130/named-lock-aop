@@ -1,5 +1,6 @@
 package org.example.namedlockaop.lock
 
+import mu.KotlinLogging
 import org.springframework.stereotype.Component
 import java.sql.Connection
 import java.sql.PreparedStatement
@@ -14,12 +15,16 @@ class NamedLockTemplate(
     private val dataSource: DataSource
 ) : LockTemplate {
 
+    private val log = KotlinLogging.logger { }
+
     override fun execute(lockKey: String, timeoutMills: Int, action: () -> Any?): Any? {
         dataSource.connection.use { con ->
             try {
                 lock(con, lockKey, timeoutMills)
+                log.info { "Get Lock - $lockKey" }
                 return action()
             } finally {
+                log.info { "Release Lock - $lockKey"}
                 unlock(con, lockKey)
             }
         }
