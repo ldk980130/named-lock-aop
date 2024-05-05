@@ -11,15 +11,13 @@ class Guest private constructor(
 
     val name: String,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id")
-    val event: Event
+    val eventId: Long
 ) {
 
     companion object {
         fun apply(name: String, event: Event): Guest {
             event.increaseGuestCount()
-            return Guest(name = name, event = event)
+            return Guest(name = name, eventId = event.id!!)
         }
     }
 }

@@ -50,7 +50,7 @@ class GuestServiceTest {
         // then
         val event = eventRepository.findByIdOrNull(eventId)!!
         val guestCount = guestRepository.findAll()
-            .count { it.event.id == eventId }
+            .count { it.eventId == eventId }
 
         event.guestCount shouldBe applyCount
         event.guestCount shouldBe guestCount
