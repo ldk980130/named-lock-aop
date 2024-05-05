@@ -1,9 +1,14 @@
 spring:
   datasource:
-    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-    url: jdbc:tc:mysql:8.0:///test_container_test
-    username: root
-    password: password
+    hikari:
+      maximum-pool-size: 30
+      max-lifetime: 60000
+      jdbc-url: jdbc:tc:mysql:8.0:///test_container_test
+      username: root
+      password: password
+      driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+      connection-timeout: 5000
+      pool-name: Spring-HikariPool
   jpa:
     properties:
       hibernate:
@@ -11,3 +16,15 @@ spring:
         show_sql: true
         hbm2ddl:
           auto: create
+
+userlock:
+  datasource:
+    hikari:
+      maximum-pool-size: 20
+      max-lifetime: 60000
+      jdbc-url: jdbc:tc:mysql:8.0:///test_container_test
+      username: root
+      password: password
+      driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+      connection-timeout: 5000
+      pool-name: UserLock-HikariPool
