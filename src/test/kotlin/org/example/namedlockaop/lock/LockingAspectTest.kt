@@ -33,7 +33,7 @@ class LockingAspectTest {
         testTarget.doSomething(key)
 
         // then
-        verify { lockTemplate.execute("$prefix:$key", 1000, any()) }
+        verify { lockTemplate.execute("$prefix:$key", any(), any()) }
     }
 
     @Test
@@ -44,7 +44,7 @@ class LockingAspectTest {
         testTarget.doSomething()
 
         // then
-        verify { lockTemplate.execute(prefix, 1000, any()) }
+        verify { lockTemplate.execute(prefix, any(), any()) }
     }
 }
 

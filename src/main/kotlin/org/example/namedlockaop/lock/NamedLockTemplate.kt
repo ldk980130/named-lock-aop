@@ -12,6 +12,8 @@ private const val EXCEPTION_MESSAGE = "LOCK 을 수행하는 중에 오류가 �
 
 @Component
 class NamedLockTemplate(
+    // TODO 1. Datasource 분리
+    // TODO 2. Lock 패키지 별도 모듈로 분리
     private val dataSource: DataSource
 ) : LockTemplate {
 
