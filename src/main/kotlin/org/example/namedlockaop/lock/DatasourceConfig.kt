@@ -27,9 +27,4 @@ class DatasourceConfig {
             .type(HikariDataSource::class.java)
             .build()
     }
-
-    @Bean
-    fun namedLockTemplate(): LockTemplate {
-        return NamedLockTemplate(userLockDataSource())
-    }
 }

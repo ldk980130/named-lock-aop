@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
-import kotlin.random.Random
 
 @SpringBootTest
 class GuestServiceTest {
@@ -41,7 +40,7 @@ class GuestServiceTest {
     @Test
     fun `멀티 스레드 환경에서 게스트가 이벤트에 참여하면 이벤트 참가자 수가 알맞게 늘어난다`() {
         // when
-        val applyCount = Random.nextInt(2, 10)
+        val applyCount = 100
 
         executeConcurrently(applyCount) {idx ->
             guestService.apply("Guest:$idx", eventId)

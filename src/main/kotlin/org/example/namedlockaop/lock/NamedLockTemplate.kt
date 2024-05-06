@@ -1,6 +1,8 @@
 package org.example.namedlockaop.lock
 
 import mu.KotlinLogging
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.stereotype.Component
 import java.sql.Connection
 import java.sql.PreparedStatement
 import javax.sql.DataSource
@@ -9,8 +11,10 @@ private const val GET_LOCK = "SELECT GET_LOCK(?, ?)"
 private const val RELEASE_LOCK = "SELECT RELEASE_LOCK(?)"
 private const val EXCEPTION_MESSAGE = "LOCK 을 수행하는 중에 오류가 발생하였습니다."
 
+@Component
 class NamedLockTemplate(
     // TODO Lock 패키지 별도 모듈로 분리
+    @Qualifier("userLockDataSource")
     private val dataSource: DataSource
 ) : LockTemplate {
 
