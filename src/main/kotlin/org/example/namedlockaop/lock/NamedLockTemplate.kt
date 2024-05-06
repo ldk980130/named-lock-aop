@@ -13,7 +13,6 @@ private const val EXCEPTION_MESSAGE = "LOCK 을 수행하는 중에 오류가 �
 
 @Component
 class NamedLockTemplate(
-    // TODO Lock 패키지 별도 모듈로 분리
     @Qualifier("userLockDataSource")
     private val dataSource: DataSource
 ) : LockTemplate {
@@ -39,7 +38,7 @@ class NamedLockTemplate(
                 ps.setString(1, lockName)
                 ps.setInt(2, timeoutMills)
 
-                executeAndCheck(ps)
+                ps.executeAndCheck()
             }
     }
 
@@ -48,16 +47,15 @@ class NamedLockTemplate(
             .use { ps ->
                 ps.setString(1, lockKey)
 
-                executeAndCheck(ps)
+                ps.executeAndCheck()
             }
     }
 
-    private fun executeAndCheck(ps: PreparedStatement) {
-        ps.executeQuery()
-            .use { rs ->
-                check(rs.next()) { EXCEPTION_MESSAGE }
-                check(rs.getInt(1) == 1) { EXCEPTION_MESSAGE }
-            }
+    private fun PreparedStatement.executeAndCheck() {
+        executeQuery().use { rs ->
+            check(rs.next()) { EXCEPTION_MESSAGE }
+            check(rs.getInt(1) == 1) { EXCEPTION_MESSAGE }
+        }
     }
 }
 
