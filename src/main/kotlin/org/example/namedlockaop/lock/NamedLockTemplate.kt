@@ -19,11 +19,11 @@ class NamedLockTemplate(
 
     private val log = KotlinLogging.logger { }
 
-    override fun execute(lockKey: String, timeoutMills: Int, action: () -> Any?): Any? {
+    override fun execute(lockKey: String, timeout: Int, action: () -> Any?): Any? {
         dataSource.connection.use { con ->
             try {
-                lock(con, lockKey, timeoutMills)
-                log.info { "Get Lock - $lockKey" }
+                lock(con, lockKey, timeout)
+                log.info { "Get Lock - $lockKey, (timeout=$timeout)" }
                 return action()
             } finally {
                 log.info { "Release Lock - $lockKey"}

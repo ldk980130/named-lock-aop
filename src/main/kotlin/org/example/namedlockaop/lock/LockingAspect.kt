@@ -17,17 +17,16 @@ class LockingAspect(
 
     @Around("@annotation(org.example.namedlockaop.lock.Locking)")
     fun execute(joinPoint: ProceedingJoinPoint): Any? {
-        val lockKey = getLockKey(joinPoint)
-        return lockTemplate.execute(lockKey) { joinPoint.proceed() }
-    }
-
-    private fun getLockKey(joinPoint: ProceedingJoinPoint): String {
         val locking = joinPoint.getAnnotation(Locking::class.java)
-        val prefix = locking.keyPrefix
 
-        return joinPoint.getArgValue(LockKey::class.java)
+        val prefix = locking.keyPrefix
+        val timeout = locking.timeout
+
+        val lockKey = joinPoint.getArgValue(LockKey::class.java)
             ?.let { "$prefix:$it" }
             ?: prefix
+
+        return lockTemplate.execute(lockKey, timeout) { joinPoint.proceed() }
     }
 
     private fun <T : Annotation> ProceedingJoinPoint.getAnnotation(annotation: Class<T>): T {

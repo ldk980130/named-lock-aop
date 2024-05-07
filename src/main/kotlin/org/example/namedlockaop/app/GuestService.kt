@@ -13,7 +13,7 @@ class GuestService(
     private val eventRepository: EventRepository
 ) {
 
-    @Locking("guest-apply")
+    @Locking(keyPrefix = "guest-apply", timeout = 1)
     fun apply(name: String, @LockKey eventId: Long) {
         val event = eventRepository.findByIdOrNull(eventId)
             ?: throw IllegalArgumentException("Event with id $eventId not found")
